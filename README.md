@@ -13,9 +13,9 @@ A full-stack AI-powered **Intrusion Detection System (IDS)** built on the UNSW-N
 - 🔍 **Binary Classification** : Detects whether network traffic is normal or malicious
 - 🧬 **Multi-Class Classification** : Identifies the attack type across 9 categories
 - 📁 **Dual Input Support** : Accepts both `.csv` and `.pcap` file formats
-- 🦈 **TShark Integration** : `.pcap` files are automatically converted to `.csv` via TShark before analysis
+- 🦈 **TShark + NFStream** : `.pcap` files are processed via TShark and NFStream to extract network flow features
 - 📊 **Confidence Scores** : Each detected threat comes with a model confidence percentage
-- ⚡ **FastAPI Backend** : Fast and lightweight Python API
+- ⚡ **FastAPI Backend** : Runs on WSL/Debian with a Python virtual environment
 - 🖥️ **Sentinel UI** : Dark tactical interface built with React
 
 ---
@@ -27,7 +27,7 @@ A full-stack AI-powered **Intrusion Detection System (IDS)** built on the UNSW-N
 | Random Forest (Binary) | Normal vs. Attack | 90% | 0.90 |
 | Random Forest (Multi-class) | Attack Type (9 classes) | 76% | 0.77 |
 
-> **Note on multi-class performance:** The dataset is heavily imbalanced , Generic has 80,000 samples while Worms has only 130. SMOTE was applied during training to handle class imbalance.
+> **Note on multi-class performance:** The dataset is heavily imbalanced Generic has 40,000 samples while Worms has only 130. SMOTE was applied during training to handle class imbalance.
 
 ### Attack Categories Detected
 `DoS` `Exploits` `Fuzzers` `Generic` `Reconnaissance` `Backdoor` `Analysis` `Shellcode` `Worms`
@@ -36,7 +36,7 @@ A full-stack AI-powered **Intrusion Detection System (IDS)** built on the UNSW-N
 
 ## 🗂️ Dataset
 
-**UNSW-NB15** — University of New South Wales network traffic dataset
+**UNSW-NB15** — University of New South Wales network traffic dataset  
 175,341 samples | 9 attack categories | Real network flows
 
 📎 [Kaggle: UNSW-NB15](https://www.kaggle.com/datasets/mrwellsdavid/unsw-nb15)
@@ -48,9 +48,9 @@ A full-stack AI-powered **Intrusion Detection System (IDS)** built on the UNSW-N
 ```
 ai-network-threat-detector/
 ├── backend/
-│   ├── main.py                  # FastAPI app
+│   ├── main.py                  # FastAPI app (POST /analyze/csv, POST /analyze/pcap)
 │   ├── requirement.txt
-│   └── models/                  # ⚠️ Not included — see note below
+│   └── models/                  # ⚠️ Not included see Models note below
 │       ├── model1_binary.pkl
 │       ├── model2_multiclass.pkl
 │       ├── encoders.pkl
@@ -63,16 +63,16 @@ ai-network-threat-detector/
 └── screenshots/
 ```
 
-> ⚠️ **Model files** are not included in this repo due to size. Contact me or retrain using the notebook.
+> ⚠️ **Model files** are not included in this repo due to size. Download them here: [HuggingFace / Google Drive — link coming soon]
 
 ---
 
 ## 🔬 How It Works
 
 1. Upload a `.csv` or `.pcap` network capture file
-2. If `.pcap`: TShark extracts the raw packets, NFStream processes them into network flow features
-3. The backend preprocesses the traffic features
-4. **Model 1** runs binary classification — is this traffic malicious?
+2. If `.pcap`: TShark extracts raw packets → NFStream converts them into network flow features
+3. The backend preprocesses and scales the features
+4. **Model 1** runs binary classification is this traffic malicious?
 5. **Model 2** classifies the attack type for all flagged flows
 6. Results display with threat labels and confidence scores
 
@@ -83,14 +83,18 @@ ai-network-threat-detector/
 ### Prerequisites
 - Python 3.10+
 - Node.js 18+
-- TShark installed on your system
+- WSL / Debian
+- TShark (`sudo apt install tshark`)
+- NFStream (`pip install nfstream`)
 
-### Backend
+### Backend (run inside WSL/Debian)
 
 ```bash
 cd backend
+python -m venv mlenv
+source mlenv/bin/activate
 pip install -r requirement.txt
-uvicorn main:app --reload
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### Frontend
@@ -98,10 +102,19 @@ uvicorn main:app --reload
 ```bash
 cd frontend
 npm install
-npm run dev
+npm start
 ```
 
 Then open `http://localhost:3000`
+
+---
+
+## 🌐 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/analyze/csv` | Analyze a `.csv` network capture file |
+| POST | `/analyze/pcap` | Analyze a `.pcap` network capture file |
 
 ---
 
@@ -119,8 +132,9 @@ Then open `http://localhost:3000`
 |-------|-----------|
 | Frontend | React |
 | Backend | FastAPI (Python) |
+| Environment | WSL / Debian |
 | ML Models | Scikit-learn (Random Forest) |
-| PCAP Processing | NFStream + TShark |
+| PCAP Processing | TShark + NFStream |
 | Dataset | UNSW-NB15 (Kaggle) |
 | Imbalance Handling | SMOTE (imbalanced-learn) |
 
@@ -128,8 +142,8 @@ Then open `http://localhost:3000`
 
 ## 👤 Author
 
-**Sakni Tasnim**
-Telecommunications & Computer Engineering Student
+**Sakni Tasnim**  
+Telecommunications & Computer Engineering Student  
 🔗 [GitHub](https://github.com/Sakni-Tasnim) • [LinkedIn](https://www.linkedin.com/in/sakni-tasnim-0bb856389)
 
 ---
