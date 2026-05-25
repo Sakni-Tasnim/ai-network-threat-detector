@@ -1,6 +1,6 @@
 # 🛡️ AI Network Threat Detector
 
-> Analyze network traffic. Detect threats. Classify attacks — in real time.
+> Analyze network traffic. Detect threats. Classify attacks in real time.
 
 A full-stack AI-powered **Intrusion Detection System (IDS)** built on the UNSW-NB15 dataset. Upload a `.csv` or `.pcap` file and get instant threat analysis: binary classification (normal vs. attack) and multi-class attack type identification across 9 threat categories.
 
