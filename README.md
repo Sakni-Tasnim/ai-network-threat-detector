@@ -63,7 +63,7 @@ ai-network-threat-detector/
 └── screenshots/
 ```
 
-> ⚠️ **Model files** are not included in this repo due to size. Download them here: [HuggingFace / Google Drive  link coming soon]
+> ⚠️ **Model files** are not included in this repo due to size. Download them here: [HuggingFace /(https://huggingface.co/Sakni-Tasnim/network-threat-detector)]
 
 ---
 
