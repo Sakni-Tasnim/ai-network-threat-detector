@@ -1,4 +1,4 @@
-# 🛡️ AI Network Threat Detector
+# 🛡️ Sentinel.Detect: AI Network Threat Detector
 
 > Analyze network traffic. Detect threats. Classify attacks in real time.
 
